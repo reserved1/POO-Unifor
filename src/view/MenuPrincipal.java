@@ -60,6 +60,39 @@ public class MenuPrincipal {
             }
         });
 
+        //Ação de clique do mouse na lista de evento
+        listaEventos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Verifica se foi duplo clique
+                if (e.getClickCount() == 2) {
+                    //salvar a linha selecionada
+                    int linhaSelecionada = listaEventos.rowAtPoint(e.getPoint());
+
+                    // Verificar se o usuário clicou em uma linha válida
+                    if (linhaSelecionada != -1) {
+                        //Obtém o item selecionado
+                        String idEvento = (String) listaEventos.getValueAt(linhaSelecionada, 0);
+                        Evento eventoSelecionado = sistemaOriginal.getListaEventos().get(Integer.parseInt(idEvento));
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                // Muda para a tela de relatorio de evento com os dados do evento selecionado
+                                MenuEvento TelaEvento = new MenuEvento();
+                                TelaEvento.exibir(sistemaOriginal, eventoSelecionado);
+
+                                // Fecha a janela atual e libera memória
+                                Window janelaAtual = SwingUtilities.windowForComponent(listaEventos);
+                                if (janelaAtual != null) {
+                                    janelaAtual.dispose();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
     }
 
     // Metodo para exibir a janela
@@ -137,10 +170,17 @@ public class MenuPrincipal {
         //Verifica se o usuário digitou algo
         if (nome != null && !nome.trim().isEmpty()) {
             //Adicionar o evento ao sistema
-            sistemaOriginal.addEvento(nome);
+            Evento EventoAdicionado = sistemaOriginal.addEvento(nome);
 
-            //Atualizar a lista de eventos da janela
-            AtualizarListaEvento();
+            //Muda para a tela de relatorio do novo evento
+            MenuEvento TelaEvento = new MenuEvento();
+            TelaEvento.exibir(sistemaOriginal, EventoAdicionado);
+
+            //Fecha a janela atual e libera memória
+            Window janelaAtual = SwingUtilities.windowForComponent(listaEventos);
+            if (janelaAtual != null) {
+                janelaAtual.dispose();
+            }
         } else {
             //Mostra uma mensagem se nada for digitado
             JOptionPane.showMessageDialog(
