@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,32 @@ public class Evento {
     //Metodo para remover uma despesa da lista do evento
     public boolean removerDespesa(int idDespesa) {
         return listaDespesas.remove(idDespesa) != null;
+    }
+
+    //Metodo para calcular o total de um participante (soma das parcelas das despesas em que ele participa)
+    public BigDecimal calcularTotalParticipante(int idParticipante) {
+        BigDecimal total = new BigDecimal("0.00");
+        for (Despesas despesa : listaDespesas.values()) {
+            //Uso polimórfico: o valor da parcela foi calculado por DespesasGrupo ou DespesasIndividual
+            total = total.add(despesa.getValorParticipante(idParticipante));
+        }
+        return total;
+    }
+
+    //Metodo para calcular o custo total do evento (soma das parcelas de todas as despesas)
+    public BigDecimal calcularCustoTotal() {
+        BigDecimal total = new BigDecimal("0.00");
+        for (Despesas despesa : listaDespesas.values()) {
+            total = total.add(despesa.getTotalParcelas());
+        }
+        return total;
+    }
+
+    //Metodo para calcular quanto o participante excede o orçamento (zero se estiver dentro do orçamento)
+    public BigDecimal calcularExcedente(int idParticipante) {
+        Participante participante = listaParticipantes.get(idParticipante);
+        BigDecimal excedente = calcularTotalParticipante(idParticipante).subtract(participante.getOrcamento());
+        return excedente.compareTo(BigDecimal.ZERO) > 0 ? excedente : new BigDecimal("0.00");
     }
 
     // construtor do evento
