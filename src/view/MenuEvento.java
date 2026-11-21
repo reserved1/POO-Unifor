@@ -64,6 +64,80 @@ public class MenuEvento {
         //chama metodo para bloquear edição do evento
         bloquearEdicao();
 
+        //Ação de clique do mouse na lista de participante
+        listaParticipantes.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //Verifica se foi duplo clique
+                if (e.getClickCount() == 2) {
+                    //Obtém a linha selecionada
+                    int linhaSelecionada = listaParticipantes.rowAtPoint(e.getPoint());
+
+                    //Verificar se o usuário clicou em uma linha válida
+                    if (linhaSelecionada != -1) {
+                        //Obtém o id do item selecionado
+                        String idParticipante = (String) listaParticipantes.getValueAt(linhaSelecionada, 0);
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                //Muda para a tela de relatorio de participante com os dados selecionado
+                                MenuParticipante TelaDespesa = new MenuParticipante();
+                                TelaDespesa.exibir(sistemaOriginal, MenuEvento.this, eventoTela, Integer.parseInt(idParticipante));
+
+                                //Oculta o menu de evento
+                                mudaExibir(false);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        //Ação de clique do mouse na lista de despesas
+        listaDespesas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //Verifica se foi duplo clique
+                if (e.getClickCount() == 2) {
+                    //Obtém a linha selecionada
+                    int linhaSelecionada = listaDespesas.rowAtPoint(e.getPoint());
+
+                    //Verificar se o usuário clicou em uma linha válida
+                    if (linhaSelecionada != -1) {
+                        //Obtém o id do item selecionado
+                        String idDespesa = (String) listaDespesas.getValueAt(linhaSelecionada, 0);
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                //Muda para a tela de relatorio de despesa com os dados selecionado
+                                MenuDespesa TelaDespesa = new MenuDespesa();
+                                TelaDespesa.exibir(sistemaOriginal, MenuEvento.this, eventoTela, Integer.parseInt(idDespesa));
+
+                                //Oculta o menu de evento
+                                mudaExibir(false);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        //Botão para abre uma janela para cadastra um novo participante ao evento da janela
+        novoParticipanteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                novoParticipante();
+            }
+        });
+
+        //Botão para abre uma janela para cadastra uma nova despesa ao evento da janela
+        novaDespesaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                novaDespesas();
+            }
+        });
+
         //Botão para habilitar a edição do evento da janela
         editarEventoButton.addActionListener(new ActionListener() {
             @Override
@@ -116,6 +190,15 @@ public class MenuEvento {
         //Atualizar a tela de evento
         atualizarTela();
 
+    }
+
+    // Metodo mudar a exibição da janela
+    public void mudaExibir(boolean estado) {
+        painel.setVisible(estado);
+        //Se estado igual a verdadeiro atualizar a tela de evento
+        if (estado) {
+            atualizarTela();
+        }
     }
 
     //Atualiza os dados do evento da janela
@@ -275,6 +358,34 @@ public class MenuEvento {
             listaDespesas.getColumnModel().getColumn(6).setCellRenderer(centro);
 
         }
+    }
+
+    // Metodo para criar novo participante
+    public void novoParticipante() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                //Muda para a tela de relatorio de participante para cadastrar um novo participante
+                MenuParticipante TelaDespesa = new MenuParticipante();
+                TelaDespesa.exibirNovo(sistemaOriginal, MenuEvento.this, eventoTela);
+
+                //Oculta o menu de evento
+                mudaExibir(false);
+            }
+        });
+    }
+
+    // Metodo para criar nova despesa
+    public void novaDespesas() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                //Muda para a tela de relatorio de despesas para cadastrar uma nova despesas
+                MenuDespesa TelaDespesa = new MenuDespesa();
+                TelaDespesa.exibirNovo(sistemaOriginal, MenuEvento.this, eventoTela);
+
+                //Oculta o menu de evento
+                mudaExibir(false);
+            }
+        });
     }
 
     // Metodo para editar o evento

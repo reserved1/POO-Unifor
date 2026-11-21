@@ -306,6 +306,33 @@ public class Controle {
 
     }
 
+    //Metodo para converter o texto digitado na tela em valor (aceita "70,00", "70.00", "R$ 1.234,56")
+    public static BigDecimal converterValor(String texto) {
+        //Verificar se o texto não é vazio
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new RegraNegocioException("O valor não pode ser vazio.");
+        }
+        String valorTexto = texto.replace("R$", "").replace(" ", "").replace(" ", "").trim();
+
+        //Com vírgula: formato brasileiro (ponto separa milhar e vírgula separa centavos)
+        if (valorTexto.contains(",")) {
+            valorTexto = valorTexto.replace(".", "").replace(",", ".");
+        } else if (valorTexto.matches("\\d{1,3}(\\.\\d{3})+")) {
+            //Somente pontos separando grupos de 3 dígitos: separador de milhar (ex.: 1.234)
+            valorTexto = valorTexto.replace(".", "");
+        }
+
+        try {
+            BigDecimal valor = new BigDecimal(valorTexto);
+            if (valor.stripTrailingZeros().scale() > 2) {
+                throw new RegraNegocioException("Use no máximo duas casas decimais.");
+            }
+            return valor;
+        } catch (NumberFormatException e) {
+            throw new RegraNegocioException("Valor inválido: \"" + texto.trim() + "\". Digite um número como 70,00.");
+        }
+    }
+
     //Metodo para verificar id livre do map informado
     public <T> int verificarIdLivre(Map<Integer,T> listaVerificar){
         //Menor do id do sistema
