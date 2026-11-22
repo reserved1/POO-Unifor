@@ -1,12 +1,18 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Despesas {
+public abstract class Despesas implements Serializable {
+    @Serial
+    //Implementar a Serializable da classe
+    private static final long serialVersionUID = 1L;
+
     // Atributos
     private final int id;
     private String nome;

@@ -12,6 +12,8 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -58,8 +60,9 @@ public class MenuParticipante {
         // Bloqueia o redimensionamento da janela
         painel.setResizable(false);
 
-        //Ao fechar a janela encerrar o programa
-        painel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Ao fechar a janela gerar uma confirmação para salvar o sistema em arquivo
+        painel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        sairSalvar();
 
         //Bloqueia os campos para edição
         idTexto.setEditable(false);
@@ -556,8 +559,45 @@ public class MenuParticipante {
 
     }
 
+    //Metodo para salvar o sistema em arquivo
+    public void salvarDados() {
+        try {
+            sistemaOriginal.salvar();
+        } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao salvar", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    //Metodo para confirmar salvar o sistema em arquivo ao fechar a janela
+    public void sairSalvar() {
+        painel.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Chama a janela de confirmação e colocar o valor dela na variável confirmação
+                int confirmacao = JOptionPane.showConfirmDialog(
+                        painel,
+                        "Deseja salvar o sistema?",
+                        "Confirmar fechamento",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                //Se selecionar sim na janela de confirmação executar o metodo de salvar o sistema
+                if (confirmacao == JOptionPane.YES_OPTION) {
+                    //Executa o metodo para salvar os dados
+                    salvarDados();
+                }
+
+                //Encerra o programa após salvar ou selecionar não na janelar de confirmação
+                System.exit(0);
+            }
+        });
+    }
+
     //Metodo para retorna a view de evento
     public void voltarEvento() {
+        //Executa o metodo para salvar os dados em arquivo
+        salvarDados();
+
         // Pega a janela onde o painel conteúdo está inserido
         Window janelaAtual = SwingUtilities.windowForComponent(this.painelConteudo);
 

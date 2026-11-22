@@ -1,6 +1,7 @@
 package view;
 
 import controller.Controle;
+import controller.PersistenciaException;
 import model.*;
 
 import javax.swing.*;
@@ -58,8 +59,9 @@ public class MenuEvento {
         // Bloqueia o redimensionamento da janela
         painel.setResizable(false);
 
-        //Ao fechar a janela encerrar o programa
-        painel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Ao fechar a janela gerar uma confirmação para salvar o sistema em arquivo
+        painel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        sairSalvar();
 
         //chama metodo para bloquear edição do evento
         bloquearEdicao();
@@ -518,8 +520,46 @@ public class MenuEvento {
 
     }
 
+    //Metodo para salvar o sistema em arquivo
+    public void salvarDados() {
+        try {
+            sistemaOriginal.salvar();
+        } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao salvar", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    //Metodo para salvar o sistema em arquivo ao fechar a janela
+    public void sairSalvar() {
+        painel.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Chama a janela de confirmação e colocar o valor dela na variável confirmação
+                int confirmacao = JOptionPane.showConfirmDialog(
+                        painel,
+                        "Deseja salvar o sistema?",
+                        "Confirmar fechamento",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+
+                //Se selecionar sim na janela de confirmação executar o metodo de salvar o sistema
+                if (confirmacao == JOptionPane.YES_OPTION) {
+                    //Executa o metodo para salvar os dados
+                    salvarDados();
+                }
+
+                //Encerra o programa após salvar ou selecionar não na janelar de confirmação
+                System.exit(0);
+            }
+        });
+    }
+
     //Metodo para fechar o evento e voltar para o menu principal
     public void fecharEvento() {
+        //Executa o metodo para salvar os dados em arquivo
+        salvarDados();
+
         //Pega a janela onde o painel está inserido
         Window janelaAtual = SwingUtilities.windowForComponent(this.painelConteudo);
 

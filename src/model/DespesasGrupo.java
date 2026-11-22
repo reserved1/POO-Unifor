@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -7,6 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class DespesasGrupo extends Despesas {
+
+    @Serial
+    //Implementar a Serializable da classe
+    private static final long serialVersionUID = 1L;
 
     //Sobrescreve o metodo calcular despesa para o grupo com a divisão em rateio:
     //cada participante recebe a parcela truncada e os centavos restantes são distribuídos,

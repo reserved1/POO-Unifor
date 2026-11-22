@@ -2,13 +2,22 @@ package controller;
 
 import model.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public class Controle {
+public class Controle implements Serializable {
+    @Serial
+    //Implementar a Serializable da classe
+    private static final long serialVersionUID = 1L;
+
     //Cria uma lista de eventos
     private Map<Integer, Evento> listaEventos = new HashMap<>();
+
+    //Contrato de persistência usado para salvar o sistema (transient: não faz parte dos dados salvos)
+    private transient Persistencia persistencia;
 
     //Metodo para criar um novo evento
     public Evento addEvento(String nomeEvento) {
@@ -331,6 +340,19 @@ public class Controle {
         } catch (NumberFormatException e) {
             throw new RegraNegocioException("Valor inválido: \"" + texto.trim() + "\". Digite um número como 70,00.");
         }
+    }
+
+    //Metodo para definir o contrato de persistência utilizado pelo sistema
+    public void setPersistencia(Persistencia persistencia) {
+        this.persistencia = persistencia;
+    }
+
+    //Metodo para salvar o sistema usando o contrato de persistência
+    public void salvar() throws PersistenciaException {
+        if (persistencia == null) {
+            persistencia = new GerenciadorArquivo();
+        }
+        persistencia.salvar(this);
     }
 
     //Metodo para verificar id livre do map informado

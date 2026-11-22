@@ -1,9 +1,14 @@
 package model;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.Map;
 
 public class DespesasIndividual extends Despesas {
+
+    @Serial
+    //Implementar a Serializable da classe
+    private static final long serialVersionUID = 1L;
 
     // Sobrescreve o metodo calcular a despesa individual adicionando o valor da despesas a lista de participantes da despesa
     public void calcularDespesas() {
