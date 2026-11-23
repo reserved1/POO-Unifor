@@ -1,10 +1,17 @@
 package model;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Evento {
+public class Evento implements Serializable {
+    @Serial
+    //Implementar a Serializable da classe
+    private static final long serialVersionUID = 1L;
+
     // Atributos
     private final int id;
     private String nome;
@@ -53,10 +60,36 @@ public class Evento {
         return listaDespesas.remove(idDespesa) != null;
     }
 
-    // construtor do evento
+    //Metodo para calcular o total de um participante (soma das parcelas das despesas em que ele participa)
+    public BigDecimal calcularTotalParticipante(int idParticipante) {
+        BigDecimal total = new BigDecimal("0.00");
+        for (Despesas despesa : listaDespesas.values()) {
+            //Uso polimórfico: o valor da parcela foi calculado por DespesasGrupo ou DespesasIndividual
+            total = total.add(despesa.getValorParticipante(idParticipante));
+        }
+        return total;
+    }
+
+    //Metodo para calcular o custo total do evento (soma das parcelas de todas as despesas)
+    public BigDecimal calcularCustoTotal() {
+        BigDecimal total = new BigDecimal("0.00");
+        for (Despesas despesa : listaDespesas.values()) {
+            total = total.add(despesa.getTotalParcelas());
+        }
+        return total;
+    }
+
+    //Metodo para calcular quanto o participante excede o orçamento (zero se estiver dentro do orçamento)
+    public BigDecimal calcularExcedente(int idParticipante) {
+        Participante participante = listaParticipantes.get(idParticipante);
+        BigDecimal excedente = calcularTotalParticipante(idParticipante).subtract(participante.getOrcamento());
+        return excedente.compareTo(BigDecimal.ZERO) > 0 ? excedente : new BigDecimal("0.00");
+    }
+
+    // construtor do evento (valida o nome antes de criar o objeto)
     public Evento(int id, String nome) {
         this.id = id;
-        this.nome = nome;
+        setNome(nome);
     }
 
     // Get e set do evento
@@ -79,7 +112,11 @@ public class Evento {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        //Validar o nome do evento (não pode ser vazio nem só espaços) antes de alterar
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new RegraNegocioException("O nome do evento não pode ser vazio.");
+        }
+        this.nome = nome.trim();
     }
 
 }
