@@ -265,21 +265,6 @@ public class Controle implements Serializable {
         }
     }
 
-    //Metodo para adicionar a todos os participantes uma despesa essencial
-    public void despesaEssencialTodos(int idEvento, int idDespesasAdicionar) {
-        var listaParticipantes = obterEvento(idEvento).getListaParticipantes();
-        Despesas despesasAdicionar = obterEvento(idEvento).getListaDespesas().get(idDespesasAdicionar);
-
-        //Verificar se a despesa é essencial para adicionar a todos os participantes
-        if (despesasAdicionar != null && despesasAdicionar.isEssencial()) {
-            //Percorre a lista de participantes e adiciona a despesa a cada um
-            for (Participante participante : listaParticipantes.values()) {
-                addParticipanteDespesas(idEvento, despesasAdicionar.getId(), participante.getId());
-            }
-        }
-
-    }
-
     //Metodo para calcular o total do evento (o calculo é feito pelo model)
     public BigDecimal calcularTotalEvento(int idEvento) {
         return obterEvento(idEvento).calcularCustoTotal();
@@ -340,6 +325,11 @@ public class Controle implements Serializable {
         } catch (NumberFormatException e) {
             throw new RegraNegocioException("Valor inválido: \"" + texto.trim() + "\". Digite um número como 70,00.");
         }
+    }
+
+    //Metodo para executar o simulador de alternativas (objetivo extra) sem alterar o evento original
+    public ResultadoSimulacao simularAlternativas(int idEvento) {
+        return new SimuladorAlternativas().simular(obterEvento(idEvento));
     }
 
     //Metodo para definir o contrato de persistência utilizado pelo sistema

@@ -46,6 +46,7 @@ public class MenuEvento {
     private JLabel dicaSelecao;
     private JPanel menuVertical;
     private JLabel label;
+    private JButton otimizarEventoButton;
 
 
     public MenuEvento() {
@@ -181,6 +182,19 @@ public class MenuEvento {
             }
         });
 
+        //Botão para mostra uma caixa de mensagem com o resultado da simulação da otimização do evento
+        otimizarEventoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ResultadoSimulacao eventoOtimizado = sistemaOriginal.simularAlternativas(eventoTela.getId());
+                    String textoEventoOtimizado = eventoOtimizado.descrever(eventoTela);
+                    JOptionPane.showMessageDialog(null, "Simulação da Otimização do evento: \n" + textoEventoOtimizado, "Simulação da Otimização", JOptionPane.INFORMATION_MESSAGE);
+                } catch (RegraNegocioException d) {
+                    JOptionPane.showMessageDialog(null, d.getMessage(), "Erro a Otimizar", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     // Metodo para exibir a janela
@@ -405,6 +419,7 @@ public class MenuEvento {
         novaDespesaButton.setVisible(false);
         editarEventoButton.setVisible(false);
         fecharEventoButton.setVisible(false);
+        otimizarEventoButton.setVisible(false);
 
         //Mudar o nome da label do menu e o titulo da janela com o nome da operação
         labelEvento.setText("Editar Evento");
@@ -426,17 +441,16 @@ public class MenuEvento {
         //Criar uma variável com o nome salvo da janela
         String nomeEventoSalvo = nomeEventoTexto.getText();
 
-        //Verificar se o nome do evento salvo não e nulo ou vazio
-        if (nomeEventoSalvo != null && !nomeEventoSalvo.isEmpty()) {
-            //Compara o nome salvo com o nome do evento da tela, se diferente adicionar o nome salvo ao evento
-            if (!nomeEventoSalvo.equals(eventoTela.getNome())) {
+        try {
+            //Se o nome mudou, o model valida (não pode ser vazio nem só espaços) e altera o evento
+            if (nomeEventoSalvo == null || !nomeEventoSalvo.trim().equals(eventoTela.getNome())) {
                 eventoTela.setNome(nomeEventoSalvo);
             }
 
-            //Se o nome for vazio ou nulo mostra uma mensagem de erro e volta para edição
-        } else {
+            //Se o nome for vazio ou nulo mostra a mensagem do model e volta para edição sem alterar o evento
+        } catch (RegraNegocioException e) {
             nomeEventoTexto.setText(eventoTela.getNome());
-            JOptionPane.showMessageDialog(null, "Nome não pode ser vazio!!", "Nome vazio!", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Nome vazio!", JOptionPane.ERROR_MESSAGE);
             nomeEventoTexto.requestFocus();
             return;
         }
@@ -511,6 +525,7 @@ public class MenuEvento {
         novaDespesaButton.setVisible(true);
         editarEventoButton.setVisible(true);
         fecharEventoButton.setVisible(true);
+        otimizarEventoButton.setVisible(true);
 
         //Habilita os campos desnecessários
         idEventoTexto.setEnabled(true);
@@ -837,7 +852,7 @@ public class MenuEvento {
         novaDespesaButton.setText("Cadastrar Nova Despesa");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -849,7 +864,7 @@ public class MenuEvento {
         editarEventoButton.setText("Editar Evento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -861,7 +876,7 @@ public class MenuEvento {
         salvarEventoButton.setText("Salvar Evento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -873,7 +888,7 @@ public class MenuEvento {
         fecharEventoButton.setText("Fechar Evento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -885,7 +900,7 @@ public class MenuEvento {
         excluirEventoButton.setText("Excluir Evento");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -898,7 +913,7 @@ public class MenuEvento {
         descartarAlteracoesButton.setText("Descartar Alterações");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -911,11 +926,24 @@ public class MenuEvento {
         novoParticipanteButton.setText("Cadastrar Novo Participante");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(5, 5, 5, 5);
         panel3.add(novoParticipanteButton, gbc);
+        otimizarEventoButton = new JButton();
+        otimizarEventoButton.setMargin(new Insets(0, 0, 0, 0));
+        otimizarEventoButton.setMaximumSize(new Dimension(-1, -1));
+        otimizarEventoButton.setMinimumSize(new Dimension(50, 40));
+        otimizarEventoButton.setPreferredSize(new Dimension(50, 40));
+        otimizarEventoButton.setText("Simular otimização do evento");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        panel3.add(otimizarEventoButton, gbc);
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -953,4 +981,5 @@ public class MenuEvento {
     public JComponent $$$getRootComponent$$$() {
         return painelConteudo;
     }
+
 }

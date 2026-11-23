@@ -1,0 +1,133 @@
+
+== 1. Caso de referência do passeio da turma
+  OK      Ana - Transporte: 30.00
+  OK      Ana - Almoço: 20.00
+  OK      Ana - Atividade recreativa: 15.00
+  OK      Ana - Sobremesa: 10.00
+  OK      Ana - total: 75.00
+  OK      Bruno - Transporte: 30.00
+  OK      Bruno - Almoço: 20.00
+  OK      Bruno - Atividade recreativa: 0.00
+  OK      Bruno - Sobremesa: 10.00
+  OK      Bruno - total: 60.00
+  OK      Carla - Transporte: 30.00
+  OK      Carla - Almoço: 20.00
+  OK      Carla - Atividade recreativa: 15.00
+  OK      Carla - Sobremesa: 10.00
+  OK      Carla - total: 75.00
+  OK      Custo total: 210.00
+  OK      Ana excede o orçamento em: 5.00
+  OK      Carla excede o orçamento em: 5.00
+  OK      Bruno excede o orçamento em: 0.00
+  OK      Status de Bruno é 'Dentro do Orçamento' (total igual ao limite)
+
+== 2. Centavos no rateio
+  OK      Código 1: 33.34
+  OK      Código 2: 33.33
+  OK      Código 3: 33.33
+  OK      Soma das parcelas: 100.00
+  OK      100,01 - código 1: 33.34
+  OK      100,01 - código 2: 33.34
+  OK      100,01 - código 3: 33.33
+  OK      100,01 - soma: 100.01
+
+== 3. Entrada ou vínculo inválido (recusar sem alterar os dados)
+  OK      Despesa sem participantes -> recusado: "Selecione pelo menos um participante para a despesa."
+  OK      Despesa com valor negativo -> recusado: "O valor da despesa deve ser maior que zero."
+  OK      Despesa com valor zero -> recusado: "O valor da despesa deve ser maior que zero."
+  OK      Despesa com descrição vazia -> recusado: "A descrição da despesa não pode ser vazia."
+  OK      Despesa com participante não cadastrado -> recusado: "Participante 99 não está cadastrado."
+  OK      Editar despesa retirando todos os participantes -> recusado: "Selecione pelo menos um participante para a despesa."
+  OK      Participante com nome vazio -> recusado: "O nome do participante não pode ser vazio."
+  OK      Participante com orçamento negativo -> recusado: "O orçamento do participante deve ser maior ou igual a zero."
+  OK      Participante com código duplicado -> recusado: "Já existe um participante com o código 1."
+  OK      Retirar o último participante de uma despesa -> recusado: "A despesa "Atividade recreativa" ficaria sem participantes."
+  OK      Valor digitado inválido ("abc") -> recusado: "Valor inválido: "abc". Digite um número como 70,00."
+  OK      Valor digitado vazio -> recusado: "O valor não pode ser vazio."
+  OK      Estado do planejamento depois das recusas: (estado igual ao esperado)
+  OK      Orçamento igual a zero é aceito
+  OK      Contribuição de quem não participa: 0.00
+
+== 4. Alteração de orçamento
+  OK      Orçamento de Ana: 80.00
+  OK      Custo de Ana: 75.00
+  OK      Excedente de Ana: 0.00
+  OK      Status de Ana indica dentro do orçamento
+  OK      Custo total sem mudança: 210.00
+
+== 5. Exclusão de despesa
+  OK      Excluir 'Atividade recreativa'
+  OK      Ana: 60.00
+  OK      Bruno: 60.00
+  OK      Carla: 60.00
+  OK      Custo total: 180.00
+  OK      Despesa retirada também da lista de Ana
+
+== 6. Salvar e reiniciar
+  OK      Objeto recuperado é uma nova instância
+  OK      Quantidade de eventos: 1
+  OK      Quantidade de participantes: 3
+  OK      Quantidade de despesas: 4
+  OK      Dados, vínculos e resultados: (estado igual ao esperado)
+  OK      Vínculo despesa-participante preservado (mesmo objeto nas duas listas)
+
+== 7. Problema no arquivo
+  OK      Arquivo ausente gera mensagem: "Arquivo de dados não encontrado: C:\Users\reser\AppData\Local\Temp\nao-existe-73215901010900.dat."
+  OK      Arquivo inválido gera mensagem: "O arquivo C:\Users\reser\AppData\Local\Temp\invalido1373045833387125025.dat está corrompido ou não é um arquivo de dados do programa."
+  OK      Falha ao carregar preserva o planejamento em uso (mesma referência)
+  OK      Dados do planejamento em uso após a falha: (estado igual ao esperado)
+  OK      Planejamento vazio sem eventos: 0
+
+== 8. Exclusão de participante com despesas vinculadas
+  OK      Excluir Bruno (participa de 3 despesas) -> recusado: "Não é possível excluir Bruno: há despesas vinculadas (Transporte, Almoço, Sobremesa). Remova o participante dessas despesas antes de excluí-lo."
+  OK      Dados após a recusa: (estado igual ao esperado)
+  OK      Excluir participante sem despesas é permitido
+
+== 9. Edição de despesa recalcula os totais
+  OK      Ana: 70.00
+  OK      Bruno: 70.00
+  OK      Custo total: 210.00
+  OK      Ana após mudar o tipo: 90.00
+  OK      Custo total após mudar o tipo: 270.00
+  OK      Lista de Ana aponta para a despesa atualizada
+
+== 10. Conversão do valor digitado na tela
+  OK      "70,00": 70.00
+  OK      "70.00": 70.00
+  OK      "R$ 1.234,56": 1234.56
+  OK      "1.234": 1234
+  OK      "70,5": 70.5
+  OK      "10,123" (três casas decimais) -> recusado: "Use no máximo duas casas decimais."
+
+== 11. Simulador de alternativas - caso de referência
+    | Despesas mantidas: Transporte, Almoço, Atividade recreativa
+    | Despesas retiradas: Sobremesa
+    | Soma das prioridades mantidas: 3
+    |   Ana: R$ 65,00 (orçamento R$ 70,00)
+    |   Bruno: R$ 50,00 (orçamento R$ 60,00)
+    |   Carla: R$ 65,00 (orçamento R$ 70,00)
+    | Novo custo total: R$ 180,00
+  OK      Possui solução
+  OK      Opcionais mantidas: [Atividade recreativa]
+  OK      Despesas retiradas: [Sobremesa]
+  OK      Soma das prioridades: 3
+  OK      Ana: 65.00
+  OK      Bruno: 50.00
+  OK      Carla: 65.00
+  OK      Novo custo total: 180.00
+  OK      Planejamento original preservado: (estado igual ao esperado)
+
+== 12. Simulador de alternativas - sem solução (orçamento de Ana em R$ 40,00)
+    | Não há solução: as despesas essenciais não cabem no orçamento.
+    |   Ana: essenciais R$ 50,00, orçamento R$ 40,00, excesso R$ 10,00
+  OK      Não possui solução
+  OK      Essenciais de Ana: 50.00
+  OK      Excesso de Ana: 10.00
+  OK      Somente Ana excede: [1]
+
+== 13. Simulador de alternativas - limites
+  OK      Mais de 10 despesas opcionais -> recusado: "O simulador aceita no máximo 10 despesas opcionais."
+  OK      Com 10 opcionais que cabem, mantém todas
+  OK      Opcional com prioridade 0 -> recusado: "A despesa opcional "Opcional 1" precisa de prioridade inteira positiva (1 a 9)."
+
+Resultado: 96 verificações aprovadas, 0 reprovadas.

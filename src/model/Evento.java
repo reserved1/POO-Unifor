@@ -86,10 +86,10 @@ public class Evento implements Serializable {
         return excedente.compareTo(BigDecimal.ZERO) > 0 ? excedente : new BigDecimal("0.00");
     }
 
-    // construtor do evento
+    // construtor do evento (valida o nome antes de criar o objeto)
     public Evento(int id, String nome) {
         this.id = id;
-        this.nome = nome;
+        setNome(nome);
     }
 
     // Get e set do evento
@@ -112,7 +112,11 @@ public class Evento implements Serializable {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        //Validar o nome do evento (não pode ser vazio nem só espaços) antes de alterar
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new RegraNegocioException("O nome do evento não pode ser vazio.");
+        }
+        this.nome = nome.trim();
     }
 
 }
